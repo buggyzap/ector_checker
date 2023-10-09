@@ -4,7 +4,6 @@ namespace Ector\Checker;
 
 class LastCheck
 {
-
     private $last;
 
     public function __construct()
