@@ -9,7 +9,7 @@ class LastCheck
 
     public function __construct()
     {
-        $this->last = (int)\Configuration::getValue("_ECTOR_LASTCHECK");
+        $this->last = (int)\Configuration::get("_ECTOR_LASTCHECK");
     }
 
     public function getLastCheck(): int

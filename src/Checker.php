@@ -23,12 +23,12 @@ class Checker
 
     public function getLastCheck()
     {
-        return \Configuration::getValue("_ECTOR_LASTCHECK");
+        return \Configuration::get("_ECTOR_LASTCHECK");
     }
 
     public function getKey()
     {
-        return \Configuration::getValue("_ECTOR_APIKEY");
+        return \Configuration::get("_ECTOR_APIKEY");
     }
 
     /**
