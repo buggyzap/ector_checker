@@ -2,18 +2,47 @@
 
 namespace Ector\Checker;
 
+use Ector\Checker\Api\Client;
+
 class Checker
 {
-    public function getKey()
+
+    const CHECK_DIFF = 60;
+
+    public function checkHasToBeRun(LastCheck $lastCheck)
     {
-        return Configuration::getValue("_ECTOR_APIKEY");
+        $now = time();
+        $diff = $now - $lastCheck->getLastCheck();
+
+        if ($diff > self::CHECK_DIFF) {
+            return true;
+        }
+
+        return false;
     }
 
-    public function check()
+    public function getLastCheck()
     {
-        // emulate check log
-        file_put_contents("./ector.log", "check\n", FILE_APPEND);
+        return \Configuration::getValue("_ECTOR_LASTCHECK");
+    }
 
-        return true;
+    public function getKey()
+    {
+        return \Configuration::getValue("_ECTOR_APIKEY");
+    }
+
+    /**
+     * Perform a health check on the API
+     * 
+     * @return bool
+     */
+    public function healthCheck()
+    {
+        $key = $this->getKey();
+        if (!$key) {
+            return false;
+        }
+        $api = Client::getInstance()->get("license/verify/$key");
+        var_dump($api);
     }
 }
