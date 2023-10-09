@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 
 class CheckerTest extends TestCase
 {
-
     public function testCheckReturnsTrue()
     {
         $checker = new \Ector\Checker\Checker();
