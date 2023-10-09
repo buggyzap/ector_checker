@@ -11,6 +11,8 @@ class Checker
 
     public function check()
     {
+        // emulate check log
+        file_put_contents("./ector.log", "check\n", FILE_APPEND);
         return true;
     }
 }
