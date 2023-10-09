@@ -25,10 +25,7 @@
     "autoload": {
         "psr-4": {
             "Ector\\Checker\\": "src"
-        },
-        "files": [
-            "cron/cron.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
