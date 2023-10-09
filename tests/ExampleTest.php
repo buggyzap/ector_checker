@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace Checker\EctorChecker\Tests;
 
 use PHPUnit\Framework\TestCase;
 
