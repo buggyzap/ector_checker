@@ -13,6 +13,7 @@ class Checker
     {
         // emulate check log
         file_put_contents("./ector.log", "check\n", FILE_APPEND);
+
         return true;
     }
 }
