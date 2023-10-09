@@ -57,11 +57,11 @@ class Checker
         $key = $this->getKey();
         $lastCheck = new LastCheck();
 
-        if (!$this->checkHasToBeRun($lastCheck) && $this->getDatabaseError() !== 1) {
+        if (! $this->checkHasToBeRun($lastCheck) && $this->getDatabaseError() !== 1) {
             return true;
         }
 
-        if (!$key) {
+        if (! $key) {
             return false;
         }
 
@@ -75,7 +75,7 @@ class Checker
         $body = $api->getBody();
         $body = json_decode($body, true);
 
-        if (!$body["valid"] === true || !$body["website"] === $this->getShopDomain()) {
+        if (! $body["valid"] === true || ! $body["website"] === $this->getShopDomain()) {
             $controller->errors[] = "Your Ector installation is expired, not valid or corrupted. Please contact our support at help@ector.store if you think that is a mistake.";
 
             return false;
