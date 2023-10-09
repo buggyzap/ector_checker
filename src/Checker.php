@@ -38,7 +38,7 @@ class Checker
     public function healthCheck()
     {
         $key = $this->getKey();
-        if (!$key) {
+        if (! $key) {
             return false;
         }
         $api = Client::getInstance()->get("license/verify/$key");
