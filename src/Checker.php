@@ -52,7 +52,7 @@ class Checker
      *
      * @return bool
      */
-    public function healthCheck(\AdminModulesController $controller)
+    public function healthCheck(\AdminController $controller)
     {
         $key = $this->getKey();
         $lastCheck = new LastCheck();
