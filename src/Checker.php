@@ -46,7 +46,7 @@ class Checker
     public function healthCheck(\AdminModulesController $controller)
     {
         $key = $this->getKey();
-        if (!$key) {
+        if (! $key) {
             return false;
         }
 
