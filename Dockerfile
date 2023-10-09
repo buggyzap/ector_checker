@@ -3,7 +3,8 @@ FROM php:8.1.22-cli
 
 # PHP extensions
 
-RUN docker-php-ext-install pdo pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql 
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -21,7 +22,7 @@ RUN apt-get update && apt-get install -y git zip
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install dependencies
-# RUN composer install && composer dump-autoload -o
+RUN composer install && composer dump-autoload -o
 
 # Start the command-line interface and keep the container running
 CMD ["tail", "-f", "/dev/null"]
