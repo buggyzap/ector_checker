@@ -34,6 +34,7 @@ class Checker
     {
         // parse url from _PS_BASE_URL_
         $url = parse_url(_PS_BASE_URL_);
+
         // return host
         return $url['host'];
     }
@@ -60,7 +61,7 @@ class Checker
         $body = $api->getBody();
         $body = json_decode($body, true);
 
-        if (!$body["valid"] === true || !$body["website"] === $this->getShopDomain()) {
+        if (! $body["valid"] === true || ! $body["website"] === $this->getShopDomain()) {
             $controller->errors[] = "Your API key is invalid. Please check your configuration.";
         }
     }
