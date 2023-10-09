@@ -6,8 +6,7 @@ use Ector\Checker\Api\Client;
 
 class Checker
 {
-
-    const CHECK_DIFF = 60;
+    public const CHECK_DIFF = 60;
 
     public function checkHasToBeRun(LastCheck $lastCheck)
     {
@@ -33,13 +32,13 @@ class Checker
 
     /**
      * Perform a health check on the API
-     * 
+     *
      * @return bool
      */
     public function healthCheck()
     {
         $key = $this->getKey();
-        if (!$key) {
+        if (! $key) {
             return false;
         }
         $api = Client::getInstance()->get("license/verify/$key");

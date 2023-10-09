@@ -6,15 +6,15 @@ use GuzzleHttp\Client as GuzzleClient;
 
 class Client
 {
-    static private $instance = null;
+    private static $instance = null;
     private $client;
-    const BASE_URL = "https://ector.store/api/";
+    public const BASE_URL = "https://ector.store/api/";
 
     public function __construct()
     {
         $this->client = new GuzzleClient([
             'base_uri' => self::BASE_URL,
-            'timeout'  => 5.0,
+            'timeout' => 5.0,
         ]);
     }
 
