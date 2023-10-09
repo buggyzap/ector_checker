@@ -20,11 +20,6 @@ class Checker
         return false;
     }
 
-    public function getLastCheck()
-    {
-        return \Configuration::get("_ECTOR_LASTCHECK");
-    }
-
     public function getKey()
     {
         return \Configuration::get("_ECTOR_APIKEY");
@@ -32,11 +27,24 @@ class Checker
 
     public function getShopDomain()
     {
-        // parse url from _PS_BASE_URL_
         $url = parse_url(_PS_BASE_URL_);
 
-        // return host
         return $url['host'];
+    }
+
+    public function createDatabaseError()
+    {
+        \Configuration::updateValue("_ECTOR_ERROR", 1);
+    }
+
+    public function getDatabaseError()
+    {
+        return (int)\Configuration::get("_ECTOR_ERROR");
+    }
+
+    public function removeDatabaseError()
+    {
+        \Configuration::deleteByName("_ECTOR_ERROR");
     }
 
     /**
@@ -47,7 +55,13 @@ class Checker
     public function healthCheck(\AdminModulesController $controller)
     {
         $key = $this->getKey();
-        if (! $key) {
+        $lastCheck = new LastCheck();
+
+        if (!$this->checkHasToBeRun($lastCheck) && $this->getDatabaseError() !== 1) {
+            return true;
+        }
+
+        if (!$key) {
             return false;
         }
 
@@ -61,8 +75,15 @@ class Checker
         $body = $api->getBody();
         $body = json_decode($body, true);
 
-        if (! $body["valid"] === true || ! $body["website"] === $this->getShopDomain()) {
-            $controller->errors[] = "Your API key is invalid. Please check your configuration.";
+        if (!$body["valid"] === true || !$body["website"] === $this->getShopDomain()) {
+            $controller->errors[] = "Your Ector installation is expired, not valid or corrupted. Please contact our support at help@ector.store if you think that is a mistake.";
+
+            return false;
         }
+
+        $lastCheck->updateLastCheckRemote();
+        $this->removeDatabaseError();
+
+        return true;
     }
 }

@@ -8,7 +8,7 @@ class LastCheck
 
     public function __construct()
     {
-        $this->last = (int)\Configuration::get("_ECTOR_LASTCHECK");
+        $this->last = (int)\Configuration::get("_ECTOR_LASTCHECK", null, null, null, 0);
     }
 
     public function getLastCheck(): int
@@ -19,5 +19,10 @@ class LastCheck
     public function setLastCheck(int $last)
     {
         $this->last = $last;
+    }
+
+    public function updateLastCheckRemote()
+    {
+        \Configuration::updateValue("_ECTOR_LASTCHECK", time());
     }
 }
