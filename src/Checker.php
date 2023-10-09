@@ -38,10 +38,19 @@ class Checker
     public function healthCheck()
     {
         $key = $this->getKey();
-        if (! $key) {
+        if (!$key) {
             return false;
         }
         $api = Client::getInstance()->get("license/verify/$key");
-        var_dump($api);
+
+        $code = $api->getStatusCode();
+        if ($code !== 200) {
+            return false;
+        }
+
+        $body = $api->getBody();
+        $body = json_decode($body, true);
+
+        var_dump($body);
     }
 }
