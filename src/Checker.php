@@ -3,6 +3,7 @@
 namespace Ector\Checker;
 
 use Ector\Checker\Api\Client;
+use GuzzleHttp\Exception\RequestException;
 
 class Checker
 {
@@ -63,16 +64,22 @@ class Checker
         $key = $this->getKey();
         $lastCheck = new LastCheck();
 
-        if (! $this->checkHasToBeRun($lastCheck) && $this->getDatabaseError() !== 1) {
+        if (!$this->checkHasToBeRun($lastCheck) && $this->getDatabaseError() !== 1) {
             return true;
         }
 
-        if (! $key) {
+        if (!$key) {
             return false;
         }
 
         if ($this->circuitBreaker->allowRequest()) {
-            $api = Client::getInstance()->get("license/verify/$key");
+
+            try {
+                $api = Client::getInstance()->get("license/verify/$key");
+            } catch (RequestException) {
+                $this->circuitBreaker->handleFailure();
+                return false;
+            }
 
             $code = $api->getStatusCode();
             if ($code !== 200) {
@@ -86,7 +93,7 @@ class Checker
             $body = $api->getBody();
             $body = json_decode($body, true);
 
-            if (! $body["valid"] === true || ! $body["website"] === $this->getShopDomain()) {
+            if (!$body["valid"] === true || !$body["website"] === $this->getShopDomain()) {
                 $controller->errors[] = "Your Ector installation is expired, not valid or corrupted. Please contact our support at help@ector.store if you think that is a mistake.";
 
                 return false;

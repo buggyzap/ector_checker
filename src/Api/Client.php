@@ -14,7 +14,7 @@ class Client
     {
         $this->client = new GuzzleClient([
             'base_uri' => self::BASE_URL,
-            'timeout' => 5.0,
+            'timeout' => 0.3,
         ]);
     }
 
