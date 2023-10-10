@@ -1,7 +1,7 @@
 # Ector Checker
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/ector/checker.svg?style=flat-square)](https://packagist.org/packages/ector/checker)
-[![Tests](https://img.shields.io/github/actions/workflow/status/ector/checker/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/buggyzap/ector_checker/actions/workflows/run-tests.yml)
+[![Tests](https://img.shields.io/github/actions/workflow/status/buggyzap/ector_checker/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/buggyzap/ector_checker/actions/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/ector/checker.svg?style=flat-square)](https://packagist.org/packages/ector/checker)
 
 Composer dependency to check if a Ector instance is valid.
@@ -11,7 +11,7 @@ Composer dependency to check if a Ector instance is valid.
 You can install the package via composer:
 
 ```bash
-composer require ector/ector-checker
+composer require ector/checker
 ```
 
 ## Usage
