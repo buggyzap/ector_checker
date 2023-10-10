@@ -13,28 +13,35 @@ class CircuitBreaker
     public const CACHE_KEY = "_ECTOR_CIRCUIT_FAIL";
     public const RETRY_KEY = "_ECTOR_CIRCUIT_RETRY";
 
-    public function __construct()
+    public function __construct(int $failures, int $lastTry)
     {
-        $this->failures = (int) \Configuration::get(self::CACHE_KEY, null, null, null, 0);
-        $this->lastTry = (int) \Configuration::get(self::RETRY_KEY, null, null, null, time());
+        $this->failures = $failures;
+        $this->lastTry = $lastTry;
         $this->isOpen = $this->failures >= self::MAX_FAILURES;
     }
 
     public function updateLastTry()
     {
-        \Configuration::updateValue(self::RETRY_KEY, time());
+        $this->lastTry = time();
+        if (class_exists("\Configuration")) {
+            \Configuration::updateValue(self::RETRY_KEY, time());
+        }
     }
 
     public function incrementFailures()
     {
         $this->failures++;
-        \Configuration::updateValue(self::CACHE_KEY, $this->failures);
+        if (class_exists("\Configuration")) {
+            \Configuration::updateValue(self::CACHE_KEY, $this->failures);
+        }
     }
 
     public function resetFailures()
     {
         $this->failures = 0;
-        \Configuration::updateValue(self::CACHE_KEY, $this->failures);
+        if (class_exists("\Configuration")) {
+            \Configuration::updateValue(self::CACHE_KEY, $this->failures);
+        }
     }
 
     public function allowRequest(): bool
@@ -64,5 +71,29 @@ class CircuitBreaker
         if ($this->failures >= self::MAX_FAILURES) {
             $this->isOpen = true;
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getFailures(): int
+    {
+        return $this->failures;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsOpen(): bool
+    {
+        return $this->isOpen;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLastTry(): int
+    {
+        return $this->lastTry;
     }
 }

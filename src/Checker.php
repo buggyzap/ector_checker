@@ -12,7 +12,10 @@ class Checker
 
     public function __construct()
     {
-        $this->circuitBreaker = new CircuitBreaker();
+        $this->circuitBreaker = new CircuitBreaker(
+            (int) \Configuration::get(CircuitBreaker::CACHE_KEY, null, null, null, 0),
+            (int) \Configuration::get(CircuitBreaker::RETRY_KEY, null, null, null, time())
+        );
     }
 
     public function checkHasToBeRun(LastCheck $lastCheck)
@@ -54,6 +57,20 @@ class Checker
         \Configuration::deleteByName("_ECTOR_ERROR");
     }
 
+    public function getParamerersConfiguration()
+    {
+        $config = include _PS_CORE_DIR_ . '/app/config/parameters.php';
+
+        return $config['parameters'] ?? [];
+    }
+
+    public function isCloudEnvironment()
+    {
+        $parameters = $this->getParamerersConfiguration();
+
+        return isset($parameters['cloud_enviroment']) && $parameters['cloud_enviroment'] === true;
+    }
+
     /**
      * Perform a health check on the API
      *
@@ -61,6 +78,12 @@ class Checker
      */
     public function healthCheck(\AdminController $controller)
     {
+
+        // never perform check in cloud environment
+        if ($this->isCloudEnvironment()) {
+            return true;
+        }
+
         $key = $this->getKey();
         $lastCheck = new LastCheck();
 
@@ -85,6 +108,7 @@ class Checker
             $code = $api->getStatusCode();
             if ($code !== 200) {
                 $this->circuitBreaker->handleFailure();
+
                 return false;
             }
 
