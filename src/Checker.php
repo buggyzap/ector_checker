@@ -7,6 +7,12 @@ use Ector\Checker\Api\Client;
 class Checker
 {
     public const CHECK_DIFF = 60;
+    private $circuitBreaker;
+
+    public function __construct()
+    {
+        $this->circuitBreaker = new CircuitBreaker();
+    }
 
     public function checkHasToBeRun(LastCheck $lastCheck)
     {
@@ -39,7 +45,7 @@ class Checker
 
     public function getDatabaseError()
     {
-        return (int)\Configuration::get("_ECTOR_ERROR");
+        return (int) \Configuration::get("_ECTOR_ERROR");
     }
 
     public function removeDatabaseError()
@@ -57,33 +63,40 @@ class Checker
         $key = $this->getKey();
         $lastCheck = new LastCheck();
 
-        if (! $this->checkHasToBeRun($lastCheck) && $this->getDatabaseError() !== 1) {
+        if (!$this->checkHasToBeRun($lastCheck) && $this->getDatabaseError() !== 1) {
             return true;
         }
 
-        if (! $key) {
+        if (!$key) {
             return false;
         }
 
-        $api = Client::getInstance()->get("license/verify/$key");
+        if ($this->circuitBreaker->allowRequest()) {
+            $api = Client::getInstance()->get("license/verify/$key");
 
-        $code = $api->getStatusCode();
-        if ($code !== 200) {
-            return false;
+            $code = $api->getStatusCode();
+            if ($code !== 200) {
+                $this->circuitBreaker->handleFailure();
+                return false;
+            }
+
+            $this->circuitBreaker->handleSuccess();
+
+            $body = $api->getBody();
+            $body = json_decode($body, true);
+
+            if (!$body["valid"] === true || !$body["website"] === $this->getShopDomain()) {
+                $controller->errors[] = "Your Ector installation is expired, not valid or corrupted. Please contact our support at help@ector.store if you think that is a mistake.";
+                return false;
+            }
+
+            $lastCheck->updateLastCheckRemote();
+            $this->removeDatabaseError();
+        } else {
+            \PrestaShopLogger::addLog("Ector: Circuit breaker is open", 3);
         }
-
-        $body = $api->getBody();
-        $body = json_decode($body, true);
-
-        if (! $body["valid"] === true || ! $body["website"] === $this->getShopDomain()) {
-            $controller->errors[] = "Your Ector installation is expired, not valid or corrupted. Please contact our support at help@ector.store if you think that is a mistake.";
-
-            return false;
-        }
-
-        $lastCheck->updateLastCheckRemote();
-        $this->removeDatabaseError();
 
         return true;
+
     }
 }
