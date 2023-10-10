@@ -4,15 +4,14 @@ namespace Ector\Checker;
 
 class CircuitBreaker
 {
-
     private $isOpen = false;
     private $failures = 0;
     private $lastTry = 0;
-    const MAX_FAILURES = 3;
-    const RETRY_TIMEOUT = 120;
+    public const MAX_FAILURES = 3;
+    public const RETRY_TIMEOUT = 120;
 
-    const CACHE_KEY = "_ECTOR_CIRCUIT_FAIL";
-    const RETRY_KEY = "_ECTOR_CIRCUIT_RETRY";
+    public const CACHE_KEY = "_ECTOR_CIRCUIT_FAIL";
+    public const RETRY_KEY = "_ECTOR_CIRCUIT_RETRY";
 
     public function __construct()
     {
@@ -47,6 +46,7 @@ class CircuitBreaker
         if ($this->isOpen) {
             return false;
         }
+
         return true;
     }
 
