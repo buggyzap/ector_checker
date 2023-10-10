@@ -17,6 +17,7 @@ class CircuitBreaker
     {
         $this->failures = (int) \Configuration::get(self::CACHE_KEY, null, null, null, 0);
         $this->lastTry = (int) \Configuration::get(self::RETRY_KEY, null, null, null, time());
+        $this->isOpen = $this->failures >= self::MAX_FAILURES;
     }
 
     public function updateLastTry()

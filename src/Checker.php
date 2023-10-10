@@ -76,7 +76,7 @@ class Checker
 
             try {
                 $api = Client::getInstance()->get("license/verify/$key");
-            } catch (RequestException) {
+            } catch (RequestException $e) {
                 $this->circuitBreaker->handleFailure();
                 return false;
             }
@@ -84,7 +84,6 @@ class Checker
             $code = $api->getStatusCode();
             if ($code !== 200) {
                 $this->circuitBreaker->handleFailure();
-
                 return false;
             }
 
